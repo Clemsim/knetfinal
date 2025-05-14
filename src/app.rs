@@ -1,9 +1,11 @@
-use leptos::prelude::*;
+use leptos::{prelude::*, task::spawn_local};
 use leptos_meta::{provide_meta_context, Stylesheet, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
     StaticSegment, WildcardSegment,
 };
+#[cfg(feature="ssr")]
+use crate::{connection::establish_connection, models::create_user};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -33,14 +35,37 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    // Creates a reactive value to update the button
-    let count = RwSignal::new(0);
-    let on_click = move |_| *count.write() += 1;
+// Creates a reactive value to update the button
+let count = RwSignal::new(0);
+let on_click = move |_| *count.write() += 1;
 
-    view! {
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
+let posts = RwSignal::new(0);
+
+let on_click2 = {
+    // Clone the signal for use in the async block
+    let posts = posts.clone();
+    move |_| {
+        spawn_local(async move {
+            if let Ok(num) = read_posts_number().await {
+                posts.set(num);  // Update the RwSignal with the value
+            }
+        });
     }
+};
+
+view! {
+    <h1>"Welcome to Leptos!"</h1>
+    <button on:click=on_click>"Click Me: " {count}</button>
+    <button on:click=move |_| {
+        spawn_local(async {
+            test().await.unwrap();
+        })
+    }></button>
+
+    <button on:click=on_click2>"Load Posts Count"</button>
+    <p>"Number of posts: " {posts}</p>
+}
+
 }
 
 /// 404 - Not Found
@@ -63,4 +88,24 @@ fn NotFound() -> impl IntoView {
     view! {
         <h1>"Not Found"</h1>
     }
+}
+
+#[server]
+pub async fn test()->Result<(), ServerFnError>{
+    let mut conn = establish_connection();
+
+    for i in 0..100{
+        create_user(&mut conn, &i.to_string());
+    }
+    Ok(())
+}
+
+#[server]
+pub async fn read_posts_number()->Result<usize, ServerFnError>{
+    let mut conn = establish_connection();
+    use crate::schema::users::dsl::*;
+    use crate::models::User;
+    use diesel::prelude::*;
+    let results = users.select(User::as_select()).load(&mut conn).expect("");
+    return Ok(results.len())
 }
