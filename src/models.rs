@@ -1,6 +1,7 @@
 #![cfg(feature="ssr")]
 use diesel::prelude::*;
 
+#[cfg(not(feature="ssr"))]
 #[derive(Queryable, Selectable, serde::Serialize, serde::Deserialize, Clone)]
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -11,20 +12,9 @@ pub struct User {
 }
 
 use crate::schema::users;
+#[cfg(not(feature="ssr"))]
 #[derive(Insertable)]
 #[diesel(table_name=users)]
 pub struct NewUser<'a>{
     pub nom: &'a String
-}
-
-pub fn create_user(conn: &mut PgConnection, nom: &String){
-    use crate::schema::users;
-
-    let newuser = NewUser{nom};
-
-    let _ = diesel::insert_into(users::table)
-        .values(newuser)
-        .returning(User::as_returning())
-        .get_result(conn)
-        .expect("Error saving new user");
 }

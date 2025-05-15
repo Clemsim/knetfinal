@@ -1,12 +1,13 @@
 pub mod app;
+pub mod balance_component;
 #[cfg(feature="ssr")]
 pub mod connection;
-#[cfg(feature="ssr")]
 pub mod models;
 #[cfg(feature="ssr")]
 pub mod schema;
-#[cfg(feature="ssr")]
 pub mod balance;
+#[cfg(feature="ssr")]
+pub mod create_user;
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn hydrate() {

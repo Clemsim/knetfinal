@@ -4,8 +4,10 @@ use leptos_router::{
     components::{Route, Router, Routes},
     StaticSegment, WildcardSegment,
 };
+
+use crate::balance_component::Balance;
 #[cfg(feature="ssr")]
-use crate::{connection::establish_connection, models::create_user};
+use crate::{connection::establish_connection, create_user};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -35,36 +37,37 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-// Creates a reactive value to update the button
-let count = RwSignal::new(0);
-let on_click = move |_| *count.write() += 1;
+    // Creates a reactive value to update the button
+    let count = RwSignal::new(0);
+    let on_click = move |_| *count.write() += 1;
 
-let posts = RwSignal::new(0);
+    let posts = RwSignal::new(0);
 
-let on_click2 = {
-    // Clone the signal for use in the async block
-    let posts = posts.clone();
-    move |_| {
-        spawn_local(async move {
-            if let Ok(num) = read_posts_number().await {
-                posts.set(num);  // Update the RwSignal with the value
-            }
-        });
+    let on_click2 = {
+        // Clone the signal for use in the async block
+        let posts = posts.clone();
+        move |_| {
+            spawn_local(async move {
+                if let Ok(num) = read_posts_number().await {
+                    posts.set(num);  // Update the RwSignal with the value
+                }
+            });
+        }
+    };
+
+    view! {
+        <h1>"Welcome to Leptos!"</h1>
+        <button on:click=on_click>"Click Me: " {count}</button>
+        <button on:click=move |_| {
+            spawn_local(async {
+                test().await.unwrap();
+            })
+        }></button>
+
+        <button on:click=on_click2>"Load Posts Count"</button>
+        <p>"Number of posts: " {posts}</p>
+        <Balance/>
     }
-};
-
-view! {
-    <h1>"Welcome to Leptos!"</h1>
-    <button on:click=on_click>"Click Me: " {count}</button>
-    <button on:click=move |_| {
-        spawn_local(async {
-            test().await.unwrap();
-        })
-    }></button>
-
-    <button on:click=on_click2>"Load Posts Count"</button>
-    <p>"Number of posts: " {posts}</p>
-}
 
 }
 
@@ -95,7 +98,7 @@ pub async fn test()->Result<(), ServerFnError>{
     let mut conn = establish_connection();
 
     for i in 0..100{
-        create_user(&mut conn, &i.to_string());
+        create_user::create_user(&mut conn, &i.to_string());
     }
     Ok(())
 }
