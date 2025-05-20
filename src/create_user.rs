@@ -1,4 +1,3 @@
-#![cfg(feature="ssr")]
 use diesel::prelude::*;
 
 use crate::models::*;

@@ -1,9 +1,7 @@
 #[cfg(feature="ssr")]
 use crate::connection::establish_connection;
-#[cfg(feature="ssr")]
 use crate::models::User;
 
-use leptos::task::spawn_local;
 use leptos::prelude::*;
 #[server]
 pub async fn read_user_and_balance()->Result<Vec<User>, ServerFnError>{
