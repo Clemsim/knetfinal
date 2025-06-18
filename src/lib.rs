@@ -1,4 +1,5 @@
 pub mod app;
+pub mod oauth;
 pub mod balance_component;
 #[cfg(feature="ssr")]
 pub mod connection;
@@ -6,6 +7,8 @@ pub mod models;
 #[cfg(feature="ssr")]
 pub mod schema;
 pub mod balance;
+#[cfg(feature="ssr")]
+pub mod oauth;
 #[cfg(feature="ssr")]
 pub mod create_user;
 #[cfg(feature = "hydrate")]
