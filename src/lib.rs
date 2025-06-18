@@ -7,8 +7,7 @@ pub mod models;
 #[cfg(feature="ssr")]
 pub mod schema;
 pub mod balance;
-#[cfg(feature="ssr")]
-pub mod oauth;
+
 #[cfg(feature="ssr")]
 pub mod create_user;
 #[cfg(feature = "hydrate")]
