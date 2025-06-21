@@ -7,6 +7,7 @@ pub mod models;
 #[cfg(feature="ssr")]
 pub mod schema;
 pub mod balance;
+pub mod myca;
 
 #[cfg(feature="ssr")]
 pub mod create_user;
