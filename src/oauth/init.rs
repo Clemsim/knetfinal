@@ -22,11 +22,12 @@ pub async fn init_oauth()->App_State{
         // Set the PKCE code challenge.
         .set_pkce_challenge(pkce_challenge)
         .url();
-
+    let reqclient = reqwest::Client::new();
     let app_state = App_State{
         csrftok: csrf_token,
         pkce: Mutex::new(Some(pkceverifier)),
-        client: client
+        oauth_client: client,
+        reqwest_client: reqclient,
     };
     println!("Browse to: {}", auth_url);
     return app_state

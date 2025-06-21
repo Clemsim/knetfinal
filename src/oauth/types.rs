@@ -19,5 +19,6 @@ pub struct Token_URL{
 pub struct App_State{
     pub csrftok:CsrfToken,
     pub pkce:Mutex<Option<PkceCodeVerifier>>,
-    pub client: FullyconfiguredClient,
+    pub oauth_client: FullyconfiguredClient,
+    pub reqwest_client: reqwest::Client,
 }

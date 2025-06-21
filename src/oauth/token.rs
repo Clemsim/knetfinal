@@ -37,7 +37,7 @@ pub async fn token_state() -> Result<(), ServerFnError> {
     };
 
     // Exchange the authorization code for an access token
-    let token_result = data.client
+    let token_result = data.oauth_client
         .exchange_code(AuthorizationCode::new(res.code.clone()))
         .set_pkce_verifier(pkce_verifier)
         .request_async(&http_client)

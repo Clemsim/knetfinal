@@ -9,8 +9,6 @@ pub mod schema;
 pub mod balance;
 pub mod myca;
 
-#[cfg(feature="ssr")]
-pub mod create_user;
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn hydrate() {

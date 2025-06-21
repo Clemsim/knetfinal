@@ -7,7 +7,7 @@ use leptos_router::{
 
 use crate::balance_component::Balance;
 #[cfg(feature="ssr")]
-use crate::{connection::establish_connection, create_user};
+use crate::{connection::establish_connection};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -58,11 +58,11 @@ fn HomePage() -> impl IntoView {
     view! {
         <h1>"Welcome to Leptos!"</h1>
         <button on:click=on_click>"Click Me: " {count}</button>
-        <button on:click=move |_| {
-            spawn_local(async {
-                test().await.unwrap();
-            })
-        }></button>
+        // <button on:click=move |_| {
+        //     spawn_local(async {
+        //         test().await.unwrap();
+        //     })
+        // }></button>
 
         <button on:click=on_click2>"Load Posts Count"</button>
         <p>"Number of posts: " {posts}</p>
@@ -93,15 +93,6 @@ fn NotFound() -> impl IntoView {
     }
 }
 
-#[server]
-pub async fn test()->Result<(), ServerFnError>{
-    let mut conn = establish_connection();
-
-    for i in 0..100{
-        create_user::create_user(&mut conn, &i.to_string());
-    }
-    Ok(())
-}
 
 #[server]
 pub async fn read_posts_number()->Result<usize, ServerFnError>{
