@@ -1,5 +1,5 @@
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
-    nom VARCHAR NOT NULL,
+    username VARCHAR NOT NULL,
     balance INT
 )
